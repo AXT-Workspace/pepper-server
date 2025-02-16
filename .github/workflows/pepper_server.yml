@@ -58,4 +58,4 @@ jobs:
         with:
           app-name: 'pepper-server'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
+          publish-profile: ${{ secrets.AZURE_PEPPER_SECRET }}
