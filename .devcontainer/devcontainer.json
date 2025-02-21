@@ -1,0 +1,36 @@
+{
+  "name": "FastAPI Dev Container",
+  "features": {},
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "chmod +x ./scripts/setup.sh && . ./scripts/setup.sh", // Install dev dependencies,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",          // Python extension
+        "humao.rest-client",         // REST Client for testing HTTP requests
+        "redhat.vscode-yaml",        // YAML support
+        "esbenp.prettier-vscode"     // Prettier for formatting (optional)
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "editor.formatOnSave": true,
+        "files.eol": "\r\n"
+      }
+    },
+    "terminal": {
+      "shell": "/bin/bash",
+      "args": [
+        "-c",
+        "fastapi dev app.py; exec bash"
+      ]
+    }
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+}
