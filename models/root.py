@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class RootResponse(BaseModel):
-  message: str
+  message: str = Field(description="The response to confirm that the server is running.")
