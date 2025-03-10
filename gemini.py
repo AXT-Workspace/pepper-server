@@ -1,66 +1,65 @@
-from typing import Tuple, List
-from collections import namedtuple
+from typing import Tuple, List, Optional
+from dataclasses import dataclass
+import json
 from google import genai
 import os
 
-client = genai.Client(api_key = os.getenv("GOOGLE_API_KEY"))
-response = client.models.generate_content(
-    model="gemini-2.0-flash-lite-preview-02-05", contents="Explain how AI works"
-)
-print(response.text)
+# client = genai.Client(api_key = os.getenv("GOOGLE_API_KEY"))
+# response = client.models.generate_content(
+#     model="gemini-2.0-flash-lite-preview-02-05", contents="Explain how AI works"
+# )
+# print(response.text)
 
+@dataclass
+class Subject:
+    name: str  # The name of the subject (sub-topic)
+    feel: str  # The user's feeling about the subject (negative, neutral, positive)
 
-
-Subject = namedtuple("Subject", ["name", "feel"])
-TopicSubject = Tuple[str, str, List[Subject]]
+@dataclass
+class TopicWithSubject:
+    name: str
+    feel: str
+    subjects: Optional[List[Subject]] = None
 
 class PromptGenerator:
     def __init__(self):
         """
         Prompt dictionary is the main JSON object on the sent request.
-        TopicSubject object contains a list of Subjects that have parent-children relationship based on index.
+        TopicWithSubject object contains a list of Subjects that have parent-children relationship based on index.
         
         "prompt": {
             "text": "REQUIRED. Raw prompt text taken from the STT.",
-            "history": "OPTIONAL. List of TopicSubject objects with recent previous conversations topics.",
-            "current": "OPTIONAL. TopicSubject object of current topic and subjects.
+            "history": "OPTIONAL. List of TopicWithSubject objects with recent previous conversations topics.",
+            "current": "OPTIONAL. TopicWithSubject object of current topic and subjects.
         }
         """
-        self.final_prompt = ""
-        self.topic_current
-        self.topic_history = []
-
-
-    def create_topic(name: str, feel: str, subjects: List[Subject]) -> TopicSubject:
-        return (name, feel, subjects)
-
-
-    def define_topic_current(topic_obj: TopicSubject) -> TopicSubject:
-        if topic_obj[2] is not None:
-            return (topic_obj[0], topic_obj[1], topic_obj[2])
-        return (topic_obj[0], topic_obj[1])
-    
-
-    def define_topic_history(topic_list: List[TopicSubject]) -> List[TopicSubject]:
-        processed_list: List[TopicSubject] = []
-        for topic_obj in topic_list:
-            if len(topic_obj) == 3: # Check if subjects are present
-                processed_list.append(topic_obj)
-            else:
-                processed_list.append((topic_obj[0], topic_obj[1], [])) # Add empty list of subjects
-        return processed_list
-    
-    def get_prompt():
+        self.prompt = {}
         
+    def set_text(self, text: str):
+        self.prompt["text"] = text
 
-# Prompt Example
-# {
-#   "prompt": {
-#     "text": "User's input goes here.",
-#       "history": "User's specific history, if available, goes here.",
-#       "topic": ["Previous_Topic", "likes/dislikes"],
-#       "subject": ["Previous_Subject", "likes/dislikes"]
-#     },
-#     "instruction": "Any specific instruction for Pepper to act on goes here."
-#   }
-# }
+    def set_topic_current(self, topic: TopicWithSubject):
+        processed_dict = {}
+        if topic.subjects is not None:
+            subject_strings = [f"{subject.name}, {subject.feel}" for subject in topic.subjects]
+            
+            processed_dict[f"{topic.name},{topic.feel}"] = subject_strings
+        else:
+            processed_dict[f"{topic.name},{topic.feel}"] = ""
+            
+        self.prompt["topic"] = processed_dict
+    
+    def set_topic_history(self, topic_list: List[TopicWithSubject]):
+        processed_dict = {}
+        for topic in topic_list:
+            if topic.subjects is not None:
+                subject_strings = [f"{subject.name}, {subject.feel}" for subject in topic.subjects]
+                
+                processed_dict[f"{topic.name},{topic.feel}"] = subject_strings
+            else:
+                processed_dict[f"{topic.name},{topic.feel}"] = ""
+
+        self.prompt["history"] = processed_dict
+        
+    def get_prompt_json(self):
+        return json.dumps(self.prompt, indent=4)
