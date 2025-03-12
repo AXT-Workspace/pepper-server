@@ -1,25 +1,33 @@
 from typing import Tuple, List
 from collections import namedtuple
-import gemini
+from gemini import PromptGenerator, TopicWithSubject, Subject
 
-generator = gemini.PromptGenerator()
+generator = PromptGenerator()
 
 generator.set_text("Hello, this is a test prompt.")
-generator.set_topic_current(gemini.TopicWithSubject("motorcycles", "positive", [gemini.Subject("oil leak", "negative")]))
+generator.set_topic_current(TopicWithSubject(
+  name = "motorcycles",
+  feel = "positive",
+  subjects = [Subject(name="oil leak", feel="negative")]
+))
 generator.set_topic_history([
-    gemini.TopicWithSubject("climbing", "positive", 
-        [
-            gemini.Subject("lace climbing shoes", "neutral"),
-            gemini.Subject("hook-and-loop climbing shoes", "positive"),
-            gemini.Subject("belaying", "positive")
-        ],
-    ),
-    gemini.TopicWithSubject("studying mathematics", "positive", 
-        [
-            gemini.Subject("abstract algebra", "neutral"),
-            gemini.Subject("calculus", "positive"),
-        ]
-    )
+  TopicWithSubject(
+    name = "climbing",
+    feel = "positive", 
+    subjects = [
+      Subject(name = "lace climbing shoes", feel = "neutral"),
+      Subject(name = "hook-and-loop climbing shoes", feel = "positive"),
+      Subject(name = "belaying", feel = "positive")
+    ],
+  ),
+  TopicWithSubject(
+    name = "studying mathematics",
+    feel = "positive", 
+    subjects = [
+      Subject(name = "abstract algebra", feel = "neutral"),
+      Subject(name = "calculus", feel = "positive"),
+    ]
+  )
 ])
 
 # print(generator.prompt["text"])
