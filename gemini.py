@@ -4,11 +4,15 @@ import json
 from google import genai
 import os
 
-client = genai.Client(api_key = os.getenv("GOOGLE_API_KEY"))
-response = client.models.generate_content(
-    model="gemini-2.0-flash-lite-preview-02-05", contents="Explain how AI works"
-)
-print(response.text)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# client = genai.Client(api_key = os.getenv("GOOGLE_API_KEY"))
+# response = client.models.generate_content(
+#     model="gemini-2.0-flash-lite-preview-02-05", contents="Explain how AI works"
+# )
+# print(response.text)
 
 
 class Subject(BaseModel):
@@ -55,7 +59,7 @@ class TopicWithSubject(BaseModel):
     )
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "motorcycles",
                 "feel": "positive",
