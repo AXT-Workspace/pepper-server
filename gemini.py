@@ -1,8 +1,6 @@
-from typing import Tuple, List, Optional
+from typing import List, Optional
 from pydantic import BaseModel, Field
 import json
-from google import genai
-import os
 
 from dotenv import load_dotenv
 
