@@ -27,7 +27,7 @@ async def chat(chat: Chat) -> ChatResponse:
     model="gemini-2.0-flash-lite-preview-02-05", contents=chat.message
   )
   print(response.text)
-  return ChatResponse(response=response.text, mood="happy")
+  return ChatResponse(response="What's up bro", mood="happy")
 
 @app.post("/chat/standard", summary="", description="This endpoint sends a chat message to the AI model and returns the response.")
 async def chat(chat: Chat) -> ChatResponse:
