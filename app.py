@@ -30,7 +30,7 @@ async def chat(chat: Chat) -> ChatResponse:
   return ChatResponse(response=response.text, mood="happy")
 
 @app.post("/chat/standard", summary="", description="This endpoint sends a chat message to the AI model and returns the response.")
-async def chat(chat: Chat) -> ChatStructuredResponse:
+async def chat(chat: Chat) -> ChatResponse:
   client = genai.Client(api_key = os.getenv("GOOGLE_API_KEY"))
   response = client.models.generate_content(
     model="gemini-2.0-flash-lite-preview-02-05", contents=chat.message
