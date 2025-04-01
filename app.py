@@ -10,6 +10,7 @@ load_dotenv()
 app = FastAPI()
 
 client = genai.Client(api_key = os.getenv("GOOGLE_API_KEY"))
+PORT = int(os.getenv("PORT", 8000))
 
 @app.get("/", summary="Root endpoint", description="This endpoint checks if the server is running.")
 async def root() -> RootResponse:
@@ -36,3 +37,7 @@ async def chat(chat: Chat) -> ChatStructuredResponse:
   )
   print(response.text)
   return ChatResponse(response=response.text, mood="happy")
+
+if __name__ == "__main__":
+  import uvicorn
+  uvicorn.run("app:app", host="0.0.0.0", port=PORT, reload=True, log_level="info")
